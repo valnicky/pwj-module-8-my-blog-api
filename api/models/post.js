@@ -1,36 +1,41 @@
 const PATH = "./exercise/data.json";
 const fs = require('fs');
 
-class Post {
+class Posts {
     get() {
         /*get posts */
-    return this.readData();
+        return this.readData();
     }
 
-    getIndividualBlog(postId) {
-        /*get one blog post */
-        const posts = this.readData();
-        const foundPost = posts.find((post) => post.id == postId);
-        return foundPost;
-    }
-    
-    add(newPost){
+    /*  getIndividualBlog(postId) {
+          get one blog post 
+          const posts = this.readData();
+          const foundPost = posts.find((post) => post.id == postId);
+          return foundPost;
+      }*/
+
+    add(newPost) {
         /*add new post*/
         const currentPosts = this.readData();
         currentPosts.unshift(newPost);
         this.storeData(currentPosts);
     }
-    
-    readData(){
-        let rawdata = fs.readFileSync(PATH);
-        let posts = JSON.parse(rawdata);
-            return posts;
+
+    readData() {
+        try {
+            return JSON.parse(fs.readFileSync(PATH, 'utf8'));
+        } catch (err) {
+            console.error(err);
+            return false
+        };
     }
-    
-    storeData(rawData){
-        let data = JSON.stringify(rawData);
-        fs.writeFileSync(PATH, data);
+
+    storeData(rawData) {
+        try {
+            fs.writeFileSync(PATH, JSON.stringify(rawData));
+        } catch (err) { console.log(err); }
+
     }
 }
 
-module.exports = Post;
+module.exports = Posts;

@@ -1,11 +1,15 @@
 const express = require('express');
 const app = express();
-const Post = require('./api/models/posts');
+const Post = require('./api/models/post');
 let multer = require('multer');
+const postsData = new Post();
+
 let storage = multer.diskStorage({
     destination: function(req, file, cb) {
-        cb(null, './uploads'),
-            filename: function(req, file, cb) { cb(null, `${file.fieldname}-${Date.now()}${getExt(file.mimetype)}`); }
+        cb(null, './uploads')
+    },
+    filename: function(req, file, cb) {
+        cb(null, `${file.fieldname}-${Date.now()}${getExt(file.mimetype)}`);
     }
 });
 
@@ -14,19 +18,18 @@ const getExt = (mimeType) => {
         case "image/png":
             return ".png";
         case "image/jpeg":
-            return ".jpeg";
+            return ".jpg";
     }
 };
 
 let upload = multer({ storage: storage });
-const postsData = new Post();
 
-app.use(express.json());
 
 app.use((req, res, next) => {
-    res.setHeader("Access-Control-Allow-Origin", "*");
+    res.setHeader('Access-Control-Allow-Origin', '*');
     next();
 });
+app.use(express.json());
 
 app.use("/uploads", express.static('uploads'));
 
@@ -34,9 +37,12 @@ app.get("/api/posts", (req, res) => {
     res.status(200).send(postsData.get());
 });
 
-app.get("/api/posts/:post_id", (req, res) => {
-    const postId = req.params.post_id;
-    const foundPost = postsData.getIndividualBlog(postId);
+app.get("/api/posts/:postId", (req, res) => {
+    const postId = req.params.postId;
+    const posts = postsData.get();
+    const foundPost = posts.find((post) => {
+        post.id == postId;
+    });
     if (foundPost) {
         res.status(200).send(foundPost);
     } else {
