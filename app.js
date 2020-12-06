@@ -13,8 +13,8 @@ let storage = multer.diskStorage({
     }
 });
 
-const getExt = (mimeType) => {
-    switch (mimeType) {
+const getExt = (mimetype) => {
+    switch (mimetype) {
         case "image/png":
             return ".png";
         case "image/jpeg":
@@ -23,7 +23,6 @@ const getExt = (mimeType) => {
 };
 
 let upload = multer({ storage: storage });
-
 
 app.use((req, res, next) => {
     res.setHeader('Access-Control-Allow-Origin', '*');
